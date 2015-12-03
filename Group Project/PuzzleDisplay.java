@@ -12,7 +12,7 @@ public class PuzzleDisplay
       TileGrid tileGrid = new TileGrid(imageFile, 10, 10);
       TileGridFrame tileGridFrame = new TileGridFrame(tileGrid, 10, 10);
       tileGridFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-      tileGridFrame.setSize(1000, 1000);
+      tileGridFrame.setSize(tileGrid.getPuzzleImageWidth(), tileGrid.getPuzzleImageHeight());
       tileGridFrame.setVisible(true);
    }
 

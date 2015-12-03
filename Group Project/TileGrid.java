@@ -13,7 +13,13 @@ public class TileGrid extends Observable implements Iterable<JLabel>, Iterator<J
 {
    private BufferedImage puzzleImage;
    private int puzzleImageWidth;
-   private int puzzleImageHeight;
+   public int getPuzzleImageWidth() {
+	return puzzleImageWidth;
+}
+public int getPuzzleImageHeight() {
+	return puzzleImageHeight;
+}
+private int puzzleImageHeight;
    private int rows;
    private int columns;
    private ArrayList<ArrayList<Tile>> tileGrid;
