@@ -32,6 +32,7 @@ public class TileGrid extends Observable implements Iterable<JLabel>, Iterator<J
       puzzleImageHeight = puzzleImage.getHeight();
       this.rows = rows;
       this.columns = columns;
+      tileGrid = new ArrayList();
       for (int i=0; i < rows; i++) {
          for (int j=0; j < columns; j++) {
             BufferedImage tileImage = puzzleImage.getSubimage(
@@ -41,7 +42,7 @@ public class TileGrid extends Observable implements Iterable<JLabel>, Iterator<J
                      puzzleImageHeight / columns
             );
             ArrayList columnList;
-            if (tileGrid.get(i) != null) {
+            if (tileGrid.size() > i) {
                columnList = tileGrid.get(i);
             } else {
                columnList = new ArrayList<Tile>();
@@ -85,7 +86,7 @@ public class TileGrid extends Observable implements Iterable<JLabel>, Iterator<J
    @Override
    public boolean hasNext()
    {
-      if (iterColumn < columns || iterRow < rows)
+      if (iterColumn < columns || iterRow < rows - 1)
          return true;
       return false;
    }
@@ -98,7 +99,7 @@ public class TileGrid extends Observable implements Iterable<JLabel>, Iterator<J
          returnLabel = tileGrid.get(iterRow).get(iterColumn);
          iterColumn++;
          return returnLabel;
-      } else if (iterRow < rows) {
+      } else if (iterRow < rows - 1) {
          iterRow++;
          iterColumn = 0;
          returnLabel = tileGrid.get(iterRow).get(iterColumn);
