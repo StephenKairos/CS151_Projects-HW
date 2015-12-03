@@ -1,5 +1,7 @@
 import java.awt.image.BufferedImage;
 
+import javax.swing.ImageIcon;
+
 public class ImageTile extends Tile {
    private BufferedImage image;
 
@@ -7,6 +9,11 @@ public class ImageTile extends Tile {
    {
       super(solvedRow, solvedColumn);
       this.image = image;
+   }
+   @Override
+   public void displayImage() {
+      ImageIcon icon = new ImageIcon(image);
+      this.setIcon(icon);
    }
 
 }

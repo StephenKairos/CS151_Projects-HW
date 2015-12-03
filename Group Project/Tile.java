@@ -15,5 +15,9 @@ public abstract class Tile extends JLabel {
 	      return true;
 	   return false;
 	}
+	
+	public void displayImage() {
+	   
+	}
 
 }

@@ -28,11 +28,11 @@ public class TileGridFrame extends JFrame implements Observer
    public void update(Observable o)
    {
       if (o instanceof TileGrid) {
-         setLayout(new GridLayout(rows, columns));
+         //setLayout(new GridLayout(rows, columns));
          for (JLabel label : tileGrid) {
+            ((ImageTile)label).displayImage();
             add(label);
          }
-         pack();
       }
       
    }
