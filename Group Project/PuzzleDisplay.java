@@ -16,9 +16,10 @@ public class PuzzleDisplay
       DisplayImageFrame displayImageFrame = new DisplayImageFrame(image);
       displayImageFrame.setSize(image.getWidth(), image.getHeight());
       displayImageFrame.setVisible(true);
-      TimeUnit.SECONDS.sleep(5);
+      TimeUnit.SECONDS.sleep(2);
       displayImageFrame.dispose();
       TileGrid tileGrid = new TileGrid(image, 3, 3);
+      tileGrid.shuffle(1);
       TileGridFrame tileGridFrame = new TileGridFrame(tileGrid);
       tileGridFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
       tileGridFrame.setSize(tileGrid.getPuzzleImageWidth(), tileGrid.getPuzzleImageHeight());

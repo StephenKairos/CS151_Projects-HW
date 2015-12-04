@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Observable;
+import java.util.Random;
 
 import javax.imageio.ImageIO;
 import javax.swing.JLabel;
@@ -207,14 +208,48 @@ public class TileGrid extends Observable
          for (int j = 0; j < columns; j++) {
 			   solved = tileGrid.get(i).get(j).isSolved(i, j);
 			   if (solved == false)
-				   break;
+				   return solved;
 		   }
 	   }
 	   return solved;
    }
-   public void shuffle() {
+   public void shuffle(int iterations) {
 	   int blankRow = 0;
 	   int blankColumn = 0;
+	   int lastDirection = 0;
+	   Random generator = new Random(System.currentTimeMillis());
+	   while (iterations > 0) {
+	      int direction = generator.nextInt(4);
+	      if (direction == lastDirection) {
+	         continue;
+	      } else {
+	         lastDirection = direction;
+	      }
+	      if (direction == 0 && blankRow -1 >= 0) // Up
+	      {
+	         swapTiles(blankRow, blankColumn, blankRow -1, blankColumn);
+	         blankRow--;
+	         iterations--;
+	      } else if (direction == 1 && blankRow + 1 < rows) // Down
+	      {
+	         swapTiles(blankRow, blankColumn, blankRow + 1, blankColumn);
+	         blankRow++;
+	         iterations--;
+	      } else if (direction == 2 && blankColumn - 1 >= 0) // Left
+	      {
+	         swapTiles(blankRow, blankColumn, blankRow, blankColumn - 1);
+	         blankColumn--;
+	         iterations--;
+	      } else if (direction == 3 && blankColumn + 1 < columns) // Right
+	      {
+	         swapTiles(blankRow, blankColumn, blankRow, blankColumn + 1);
+	         blankColumn++;
+	         iterations--;
+	      }
+	   }
 	   
+   }
+   public BufferedImage getPuzzleImage() {
+      return puzzleImage;
    }
 }

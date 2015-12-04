@@ -1,8 +1,14 @@
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.Frame;
 import java.awt.GridLayout;
+import java.awt.LayoutManager;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Observable;
 import java.util.Observer;
+
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
@@ -46,6 +52,8 @@ public class TileGridFrame extends JFrame implements Observer
             @Override
             public void mousePressed(MouseEvent e)
             {
+               if (solved == true)
+                  return;
                int column = (e.getX() * columns) / getWidth();
                int row = (e.getY() * rows) / getHeight();
                if (tileGrid.canMoveUp(row, column)) {
@@ -73,16 +81,23 @@ public class TileGridFrame extends JFrame implements Observer
    public void update(Observable o)
    {
       if (o instanceof TileGrid) {
-         setLayout(new GridLayout(rows, columns));
-         for (JLabel label : tileGrid) {
-            Tile tile = (Tile) label;
-            tile.displayImage();
-            add(label);
-            // Debugging code below
-            System.out.printf("Solved row value %d column value %d\n", tile.getSolvedRow(), tile.getSolvedColumn());
+         if (tileGrid.isSolved() == true) {
+            Frame showImage = new DisplayImageFrame(tileGrid.getPuzzleImage());
+            showImage.setSize(tileGrid.getPuzzleImageWidth(), tileGrid.getPuzzleImageHeight());
+            showImage.setTitle("Good Job!!!");
+            super.dispose();
+            showImage.setVisible(true);        
+         } else {
+            setLayout(new GridLayout(rows, columns));
+            for (JLabel label : tileGrid) {
+               Tile tile = (Tile) label;
+               tile.displayImage();
+               add(label);
+            }
          }
       }
-      revalidate();
+      pack();
+      validate();
       repaint();
    }
 
