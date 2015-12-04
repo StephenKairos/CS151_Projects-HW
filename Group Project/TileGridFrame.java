@@ -26,6 +26,7 @@ public class TileGridFrame extends JFrame implements Observer {
 	/**
     * 
     */
+<<<<<<< HEAD
 	private static final long serialVersionUID = 4230145571524018736L;
 	private TileGrid tileGrid;
 	private int rows;
@@ -40,6 +41,27 @@ public class TileGridFrame extends JFrame implements Observer {
 			this.addMouseListener(new MouseListener() {
 				public void mouseClicked(MouseEvent e) {
 				}
+=======
+   private static final long serialVersionUID = 4230145571524018736L;
+   private TileGrid tileGrid;
+   private int rows;
+   private int columns;
+   private boolean solved;
+   
+   public TileGridFrame(Observable observable) {
+      observable.addObserver(this);
+      this.solved = false;
+      if (observable instanceof TileGrid) {
+         tileGrid = (TileGrid)observable;
+         this.rows = tileGrid.getRows();
+         this.columns = tileGrid.getColumns();
+         this.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e)
+            {
+               
+            }
+>>>>>>> origin/master
 
 				public void mouseEntered(MouseEvent e) {
 				}
