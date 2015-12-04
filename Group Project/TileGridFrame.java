@@ -1,4 +1,6 @@
 import java.awt.GridLayout;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.Observable;
 import java.util.Observer;
 import javax.swing.JFrame;
@@ -14,12 +16,53 @@ public class TileGridFrame extends JFrame implements Observer
    private int rows;
    private int columns;
    
-   public TileGridFrame(Observable observable, int rows, int columns) {
+   public TileGridFrame(Observable observable) {
       observable.addObserver(this);
       if (observable instanceof TileGrid) {
          tileGrid = (TileGrid)observable;
          this.rows = tileGrid.getRows();
          this.columns = tileGrid.getColumns();
+         this.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e)
+            {
+               
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e)
+            {
+               
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e)
+            {
+               
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e)
+            {
+               int column = (e.getX() * columns) / getWidth();
+               int row = (e.getY() * rows) / getHeight();
+               if (tileGrid.canMoveUp(row, column)) {
+                  tileGrid.moveUp(row, column);
+               } else if (tileGrid.canMoveDown(row, column)) {
+                  tileGrid.moveDown(row, column);
+               } else if (tileGrid.canMoveLeft(row, column)) {
+                  tileGrid.moveLeft(row, column);
+               } else if (tileGrid.canMoveRight(row, column)) {
+                  tileGrid.moveRight(row, column);
+               }
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e)
+            {
+               
+            }
+         });
          setLayout(new GridLayout(rows, columns));
       }
       update(observable);
@@ -28,13 +71,17 @@ public class TileGridFrame extends JFrame implements Observer
    public void update(Observable o)
    {
       if (o instanceof TileGrid) {
-         //setLayout(new GridLayout(rows, columns));
+         setLayout(new GridLayout(rows, columns));
          for (JLabel label : tileGrid) {
-            ((ImageTile)label).displayImage();
+            Tile tile = (Tile) label;
+            tile.displayImage();
             add(label);
+            // Debugging code below
+            System.out.printf("Solved row value %d column value %d\n", tile.getSolvedRow(), tile.getSolvedColumn());
          }
       }
-      
+      revalidate();
+      repaint();
    }
 
    @Override
@@ -42,5 +89,4 @@ public class TileGridFrame extends JFrame implements Observer
    {
       update(o);
    }
-
 }
