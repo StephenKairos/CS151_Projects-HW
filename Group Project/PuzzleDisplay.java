@@ -11,23 +11,19 @@ public class PuzzleDisplay
 
    public static void main(String[] args) throws IOException, InterruptedException
    {
-      File imageFile = new File("Flower.jpg");
+      File imageFile = new File("C:/Users/StephenKairos/Desktop/CS151_Projects-HW/Flower.jpg");
       BufferedImage image = ImageIO.read(imageFile);
-      DisplayImageFrame displayImageFrame = new DisplayImageFrame(image);
-      displayImageFrame.setSize(image.getWidth(), image.getHeight());
-      displayImageFrame.setVisible(true);
-      TimeUnit.SECONDS.sleep(5);
-      displayImageFrame.dispose();
+//      DisplayImageFrame displayImageFrame = new DisplayImageFrame(image);
+//      displayImageFrame.setSize(image.getWidth(), image.getHeight());
+//      displayImageFrame.setVisible(true);
+//      TimeUnit.SECONDS.sleep(5);
+//      displayImageFrame.dispose();
       TileGrid tileGrid = new TileGrid(image, 3, 3);
       TileGridFrame tileGridFrame = new TileGridFrame(tileGrid);
-      tileGridFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+      tileGridFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
       tileGridFrame.setSize(tileGrid.getPuzzleImageWidth(), tileGrid.getPuzzleImageHeight());
-<<<<<<< HEAD
-      tileGridFrame.setTitle("Tile Puzzle Game");
-      tileGridFrame.setResizable(false);
-=======
       tileGridFrame.setTitle("Tile Puzzle Game - " + imageFile.getName());
->>>>>>> origin/master
+      tileGridFrame.setResizable(false);
       tileGridFrame.setVisible(true);
    }
 

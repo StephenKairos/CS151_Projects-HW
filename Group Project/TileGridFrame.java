@@ -1,38 +1,31 @@
-import java.awt.BorderLayout;
-import java.awt.Container;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.concurrent.TimeUnit;
 
-import javax.swing.ButtonGroup;
-import javax.swing.ImageIcon;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JRadioButtonMenuItem;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.KeyStroke;
+import javax.imageio.ImageIO;
+import javax.swing.*;
 
 public class TileGridFrame extends JFrame implements Observer {
 	/**
     * 
     */
-<<<<<<< HEAD
 	private static final long serialVersionUID = 4230145571524018736L;
 	private TileGrid tileGrid;
 	private int rows;
 	private int columns;
+	
+	private JFileChooser fc;
+	private int menuHeight;
 
 	public TileGridFrame(Observable observable) {
+		fc = new JFileChooser();
+		fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+		
 		observable.addObserver(this);
 		if (observable instanceof TileGrid) {
 			tileGrid = (TileGrid) observable;
@@ -41,27 +34,6 @@ public class TileGridFrame extends JFrame implements Observer {
 			this.addMouseListener(new MouseListener() {
 				public void mouseClicked(MouseEvent e) {
 				}
-=======
-   private static final long serialVersionUID = 4230145571524018736L;
-   private TileGrid tileGrid;
-   private int rows;
-   private int columns;
-   private boolean solved;
-   
-   public TileGridFrame(Observable observable) {
-      observable.addObserver(this);
-      this.solved = false;
-      if (observable instanceof TileGrid) {
-         tileGrid = (TileGrid)observable;
-         this.rows = tileGrid.getRows();
-         this.columns = tileGrid.getColumns();
-         this.addMouseListener(new MouseListener() {
-            @Override
-            public void mouseClicked(MouseEvent e)
-            {
-               
-            }
->>>>>>> origin/master
 
 				public void mouseEntered(MouseEvent e) {
 				}
@@ -71,7 +43,8 @@ public class TileGridFrame extends JFrame implements Observer {
 
 				public void mousePressed(MouseEvent e) {
 					int column = (e.getX() * columns) / getWidth();
-					int row = (e.getY() * rows) / getHeight();
+					System.out.println(menuHeight);
+					int row = ((e.getY()) * rows) / getHeight();
 					if (tileGrid.canMoveUp(row, column)) {
 						tileGrid.moveUp(row, column);
 					} else if (tileGrid.canMoveDown(row, column)) {
@@ -112,7 +85,7 @@ public class TileGridFrame extends JFrame implements Observer {
 	}
 	
 	public JMenuBar createMenuBar() {
-        JMenuBar menuBar;
+		JMenuBar menuBar;
         JMenu menu, submenu;
         JMenuItem menuItem;
         JRadioButtonMenuItem rbMenuItem;
@@ -120,70 +93,59 @@ public class TileGridFrame extends JFrame implements Observer {
  
         //Create the menu bar.
         menuBar = new JMenuBar();
- 
+        
         //Build the first menu.
         menu = new JMenu("Game");
         menu.setMnemonic(KeyEvent.VK_A);
-        menu.getAccessibleContext().setAccessibleDescription(
-                "The only menu in this program that has menu items");
         menuBar.add(menu);
  
         //a group of JMenuItems
-        menuItem = new JMenuItem("A text-only menu item",
-                                 KeyEvent.VK_T);
+        menuItem = new JMenuItem("Open",
+                                 KeyEvent.VK_O);
         //menuItem.setMnemonic(KeyEvent.VK_T); //used constructor instead
-        menuItem.setAccelerator(KeyStroke.getKeyStroke(
-                KeyEvent.VK_1, ActionEvent.ALT_MASK));
-        menuItem.getAccessibleContext().setAccessibleDescription(
-                "This doesn't really do anything");
+        menuItem.addActionListener(new openListener(this));
         menu.add(menuItem);
- 
-        //a group of radio button menu items
-        menu.addSeparator();
-        ButtonGroup group = new ButtonGroup();
- 
-        rbMenuItem = new JRadioButtonMenuItem("A radio button menu item");
-        rbMenuItem.setSelected(true);
-        rbMenuItem.setMnemonic(KeyEvent.VK_R);
-        group.add(rbMenuItem);
-        menu.add(rbMenuItem);
- 
-        rbMenuItem = new JRadioButtonMenuItem("Another one");
-        rbMenuItem.setMnemonic(KeyEvent.VK_O);
-        group.add(rbMenuItem);
-        menu.add(rbMenuItem);
- 
-        //a group of check box menu items
-        menu.addSeparator();
-        cbMenuItem = new JCheckBoxMenuItem("A check box menu item");
-        cbMenuItem.setMnemonic(KeyEvent.VK_C);
-        menu.add(cbMenuItem);
- 
-        cbMenuItem = new JCheckBoxMenuItem("Another one");
-        cbMenuItem.setMnemonic(KeyEvent.VK_H);
-        menu.add(cbMenuItem);
- 
-        //a submenu
-        menu.addSeparator();
-        submenu = new JMenu("A submenu");
-        submenu.setMnemonic(KeyEvent.VK_S);
- 
-        menuItem = new JMenuItem("An item in the submenu");
-        menuItem.setAccelerator(KeyStroke.getKeyStroke(
-                KeyEvent.VK_2, ActionEvent.ALT_MASK));
-        submenu.add(menuItem);
- 
-        menuItem = new JMenuItem("Another item");
-        submenu.add(menuItem);
-        menu.add(submenu);
- 
-        //Build second menu in the menu bar.
-        menu = new JMenu("Another Menu");
-        menu.setMnemonic(KeyEvent.VK_N);
-        menu.getAccessibleContext().setAccessibleDescription(
-                "This menu does nothing");
-        menuBar.add(menu);
  
         return menuBar;
     }
+	
+	class openListener implements ActionListener {
+		
+		private TileGridFrame thisFrame;
+		
+		public openListener(TileGridFrame f) {
+			super();
+			thisFrame = f; 
+		}
+		
+		public void actionPerformed(ActionEvent e) {
+			int returnVal = fc.showOpenDialog(TileGridFrame.this);
+
+			if (returnVal == JFileChooser.APPROVE_OPTION) {
+				thisFrame.dispose();
+				File imageFile = fc.getSelectedFile();
+				// This is where a real application would open the file.
+				try {
+					BufferedImage image = ImageIO.read(imageFile);
+				      DisplayImageFrame displayImageFrame = new DisplayImageFrame(image);
+				      displayImageFrame.setSize(image.getWidth(), image.getHeight());
+				      displayImageFrame.setVisible(true);
+				      TimeUnit.SECONDS.sleep(5);
+				      displayImageFrame.dispose();
+					TileGrid tileGrid = new TileGrid(image, 3, 3);
+					TileGridFrame tileGridFrame = new TileGridFrame(tileGrid);
+					tileGridFrame
+							.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+				    tileGridFrame.setJMenuBar(tileGridFrame.createMenuBar());
+					tileGridFrame.setSize(tileGrid.getPuzzleImageWidth(),
+							tileGrid.getPuzzleImageHeight());
+					tileGridFrame.setResizable(false);
+					tileGridFrame.setVisible(true);
+				} catch (IOException | InterruptedException exception) {
+					System.err.println("FILE NOT FOUND");
+				}
+			}
+		}
+	}
 }

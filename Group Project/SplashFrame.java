@@ -1,14 +1,13 @@
 import java.io.*;
+import java.util.concurrent.TimeUnit;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.*;
 
-/*
- * SplashFrame.java uses these files:
- *   images/Open16.gif
- */
 public class SplashFrame extends JPanel implements ActionListener {
 	static private final String newline = "\n";
 	JButton openButton;
@@ -59,20 +58,27 @@ public class SplashFrame extends JPanel implements ActionListener {
 			int returnVal = fc.showOpenDialog(SplashFrame.this);
 
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
-				File file = fc.getSelectedFile();
+				File imageFile = fc.getSelectedFile();
 				// This is where a real application would open the file.
 				try {
-					TileGrid tileGrid = new TileGrid(file, 3, 3);
+					BufferedImage image = ImageIO.read(imageFile);
+				      DisplayImageFrame displayImageFrame = new DisplayImageFrame(image);
+				      displayImageFrame.setSize(image.getWidth(), image.getHeight());
+				      displayImageFrame.setVisible(true);
+				      TimeUnit.SECONDS.sleep(2);
+				      displayImageFrame.dispose();
+					TileGrid tileGrid = new TileGrid(image, 4, 4);
 					TileGridFrame tileGridFrame = new TileGridFrame(tileGrid);
 					tileGridFrame
 							.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+					
 				    tileGridFrame.setJMenuBar(tileGridFrame.createMenuBar());
-					tileGridFrame.setSize(tileGrid.getPuzzleImageWidth(),
+				    tileGridFrame.setSize(tileGrid.getPuzzleImageWidth(),
 							tileGrid.getPuzzleImageHeight());
+
 					tileGridFrame.setResizable(false);
 					tileGridFrame.setVisible(true);
-				} catch (IOException exception) {
+				} catch (IOException | InterruptedException exception) {
 					System.err.println("FILE NOT FOUND");
 				}
 			} else {
