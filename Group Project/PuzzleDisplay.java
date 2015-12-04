@@ -14,6 +14,7 @@ public class PuzzleDisplay
       tileGridFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
       tileGridFrame.setSize(tileGrid.getPuzzleImageWidth(), tileGrid.getPuzzleImageHeight());
       tileGridFrame.setTitle("Tile Puzzle Game");
+      tileGridFrame.setResizable(false);
       tileGridFrame.setVisible(true);
    }
 
