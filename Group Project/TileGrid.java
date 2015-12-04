@@ -27,18 +27,9 @@ public class TileGrid extends Observable
    private int iterRow;
    private int iterColumn;
 
-   public TileGrid(File imageFile, int rows, int columns) throws IOException
+   public TileGrid(BufferedImage image, int rows, int columns)
    {
-      try
-      {
-         puzzleImage = ImageIO.read(imageFile);
-      }
-      catch (IOException e)
-      {
-         System.err.println("Error reading from file "
-                  + imageFile.getAbsolutePath() + imageFile.getName());
-         throw e;
-      }
+	  puzzleImage = image;
       puzzleImageWidth = puzzleImage.getWidth();
       puzzleImageHeight = puzzleImage.getHeight();
       this.rows = rows;
@@ -209,5 +200,21 @@ public class TileGrid extends Observable
    {
       setChanged();
       notifyObservers();
+   }
+   public boolean isSolved() {
+	   boolean solved = true;
+	   for (int i = 0; i < rows; i++) {
+         for (int j = 0; j < columns; j++) {
+			   solved = tileGrid.get(i).get(j).isSolved(i, j);
+			   if (solved == false)
+				   break;
+		   }
+	   }
+	   return solved;
+   }
+   public void shuffle() {
+	   int blankRow = 0;
+	   int blankColumn = 0;
+	   
    }
 }

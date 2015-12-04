@@ -15,9 +15,11 @@ public class TileGridFrame extends JFrame implements Observer
    private TileGrid tileGrid;
    private int rows;
    private int columns;
+   private boolean solved;
    
    public TileGridFrame(Observable observable) {
       observable.addObserver(this);
+      this.solved = false;
       if (observable instanceof TileGrid) {
          tileGrid = (TileGrid)observable;
          this.rows = tileGrid.getRows();
