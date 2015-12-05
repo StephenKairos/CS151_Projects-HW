@@ -11,19 +11,12 @@ public class PuzzleDisplay
 
    public static void main(String[] args) throws IOException, InterruptedException
    {
-      File imageFile = new File("Flower.jpg");
-      BufferedImage image = ImageIO.read(imageFile);
-      DisplayImageFrame displayImageFrame = new DisplayImageFrame(image);
-      displayImageFrame.setSize(image.getWidth(), image.getHeight());
-      displayImageFrame.setVisible(true);
-      TimeUnit.SECONDS.sleep(2);
-      displayImageFrame.dispose();
-      TileGrid tileGrid = new TileGrid(image, 3, 3);
-      tileGrid.shuffle(1);
-      TileGridFrame tileGridFrame = new TileGridFrame(tileGrid);
+      TileGridFrame tileGridFrame = new TileGridFrame();
       tileGridFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-      tileGridFrame.setSize(tileGrid.getPuzzleImageWidth(), tileGrid.getPuzzleImageHeight());
-      tileGridFrame.setTitle("Tile Puzzle Game - " + imageFile.getName());
+      tileGridFrame.setJMenuBar(tileGridFrame.createMenuBar());
+      tileGridFrame.pack();
+      tileGridFrame.setTitle("Tile Puzzle Game");
+      tileGridFrame.setSize(430, 130);
       tileGridFrame.setVisible(true);
    }
 

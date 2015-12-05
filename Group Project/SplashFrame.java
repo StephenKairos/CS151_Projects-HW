@@ -41,7 +41,7 @@ public class SplashFrame extends JPanel implements ActionListener {
 		// Graphics Repository (but we extracted it from the jar).
 		openButton = new JButton("Open");
 		openButton.addActionListener(this);
-		
+
 		// For layout purposes, put the buttons in a separate panel
 		JPanel buttonPanel = new JPanel(); // use FlowLayout
 		buttonPanel.add(openButton);
@@ -59,28 +59,38 @@ public class SplashFrame extends JPanel implements ActionListener {
 
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
 				File imageFile = fc.getSelectedFile();
-				// This is where a real application would open the file.
-				try {
-					BufferedImage image = ImageIO.read(imageFile);
-				      DisplayImageFrame displayImageFrame = new DisplayImageFrame(image);
-				      displayImageFrame.setSize(image.getWidth(), image.getHeight());
-				      displayImageFrame.setVisible(true);
-				      TimeUnit.SECONDS.sleep(2);
-				      displayImageFrame.dispose();
-					TileGrid tileGrid = new TileGrid(image, 4, 4);
-					TileGridFrame tileGridFrame = new TileGridFrame(tileGrid);
-					tileGridFrame
-							.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-					
-				    tileGridFrame.setJMenuBar(tileGridFrame.createMenuBar());
-				    tileGridFrame.setSize(tileGrid.getPuzzleImageWidth(),
-							tileGrid.getPuzzleImageHeight());
+				System.out.println(imageFile.canRead());
+				BufferedImage image = null;
 
-					tileGridFrame.setResizable(false);
-					tileGridFrame.setVisible(true);
-				} catch (IOException | InterruptedException exception) {
-					System.err.println("FILE NOT FOUND");
+				try {
+					image = ImageIO.read(imageFile);
+				} catch (IOException e1) {
+					System.err.println("IMAGE CORRUPTION ERROR");
 				}
+				DisplayImageFrame displayImageFrame = new DisplayImageFrame(
+						image);
+
+				displayImageFrame.setSize(image.getWidth(), image.getHeight());
+				displayImageFrame.setVisible(true);
+				displayImageFrame
+						.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+//				while (displayImageFrame.isShowing()) {
+//					// try {
+//					// TimeUnit.SECONDS.sleep(2);
+//					// } catch (InterruptedException e1) {
+//					// }
+//				}
+
+				TileGrid tileGrid = new TileGrid(image, 3, 3);
+				tileGrid.shuffle(100);
+				TileGridFrame tileGridFrame = new TileGridFrame(tileGrid, image);
+				tileGridFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+				tileGridFrame.setJMenuBar(tileGridFrame.createMenuBar());
+				tileGridFrame.setSize(tileGrid.getPuzzleImageWidth(),
+						tileGrid.getPuzzleImageHeight());
+				tileGridFrame.setResizable(false);
+				tileGridFrame.setVisible(true);
 			} else {
 				log.append("Open command cancelled by user." + newline);
 			}
@@ -117,14 +127,6 @@ public class SplashFrame extends JPanel implements ActionListener {
 	}
 
 	public static void main(String[] args) {
-		// Schedule a job for the event dispatch thread:
-		// creating and showing this application's GUI.
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				// Turn off metal's use of bold fonts
-				UIManager.put("swing.boldMetal", Boolean.FALSE);
-				createAndShowGUI();
-			}
-		});
+		createAndShowGUI();
 	}
 }

@@ -1,0 +1,11 @@
+Game Tab
+	New Game: Reshuffles current game
+	Open: New Image
+
+Options
+	Dimensions: The number of tiles, start new game
+	Tile Background Color: for blank tile
+	Sleep Timeout: time it takes for full image to show
+
+Help
+	Instructions

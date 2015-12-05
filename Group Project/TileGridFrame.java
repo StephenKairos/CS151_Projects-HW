@@ -1,109 +1,232 @@
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.Frame;
-import java.awt.GridLayout;
-import java.awt.LayoutManager;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.concurrent.TimeUnit;
 
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
+import javax.imageio.ImageIO;
+import javax.swing.*;
 
-public class TileGridFrame extends JFrame implements Observer
-{
-   /**
+public class TileGridFrame extends JFrame implements Observer {
+	/**
     * 
     */
-   private static final long serialVersionUID = 4230145571524018736L;
-   private TileGrid tileGrid;
-   private int rows;
-   private int columns;
-   private boolean solved;
-   
-   public TileGridFrame(Observable observable) {
-      observable.addObserver(this);
-      this.solved = false;
-      if (observable instanceof TileGrid) {
-         tileGrid = (TileGrid)observable;
-         this.rows = tileGrid.getRows();
-         this.columns = tileGrid.getColumns();
-         this.addMouseListener(new MouseListener() {
-            @Override
-            public void mouseClicked(MouseEvent e)
-            {
-               
-            }
+	private static final long serialVersionUID = 4230145571524018736L;
+	private TileGrid tileGrid;
+	private int rows;
+	private int columns;
 
-            @Override
-            public void mouseEntered(MouseEvent e)
-            {
-               
-            }
+	private JMenuItem OPEN, NEW;
+	private JRadioButtonMenuItem EASY, REGULAR, HARD;
+	private ButtonGroup group;
+	
+	private JFileChooser fc;
 
-            @Override
-            public void mouseExited(MouseEvent e)
-            {
-               
-            }
+	private BufferedImage image;
 
-            @Override
-            public void mousePressed(MouseEvent e)
-            {
-               if (solved == true)
-                  return;
-               int column = (e.getX() * columns) / getWidth();
-               int row = (e.getY() * rows) / getHeight();
-               if (tileGrid.canMoveUp(row, column)) {
-                  tileGrid.moveUp(row, column);
-               } else if (tileGrid.canMoveDown(row, column)) {
-                  tileGrid.moveDown(row, column);
-               } else if (tileGrid.canMoveLeft(row, column)) {
-                  tileGrid.moveLeft(row, column);
-               } else if (tileGrid.canMoveRight(row, column)) {
-                  tileGrid.moveRight(row, column);
-               }
-            }
+	public TileGridFrame() {
+		fc = new JFileChooser();
+		fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+		JTextArea log;
+		log = new JTextArea(
+				"Slide Puzzle Instructions:\nYou can select a file turn into a puzzle with OPEN.\nTo restart the game with the same image, select NEW. To set the difficulty, select options, then DIFFICULTY.",
+				5, 20);
+		log.setLineWrap(true);
+		log.setMargin(new Insets(5, 5, 5, 5));
+		log.setEditable(false);
+		add(log, BorderLayout.CENTER);
+	}
 
-            @Override
-            public void mouseReleased(MouseEvent e)
-            {
-               
-            }
-         });
-         setLayout(new GridLayout(rows, columns));
-      }
-      update(observable);
-   }
-   
-   public void update(Observable o)
-   {
-      if (o instanceof TileGrid) {
-         if (tileGrid.isSolved() == true) {
-            Frame showImage = new DisplayImageFrame(tileGrid.getPuzzleImage());
-            showImage.setSize(tileGrid.getPuzzleImageWidth(), tileGrid.getPuzzleImageHeight());
-            showImage.setTitle("Good Job!!!");
-            super.dispose();
-            showImage.setVisible(true);        
-         } else {
-            setLayout(new GridLayout(rows, columns));
-            for (JLabel label : tileGrid) {
-               Tile tile = (Tile) label;
-               tile.displayImage();
-               add(label);
-            }
-         }
-      }
-      pack();
-      validate();
-      repaint();
-   }
+	public TileGridFrame(Observable observable, BufferedImage newImage) {
+		image = newImage;
+		
+		fc = new JFileChooser();
+		fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 
-   @Override
-   public void update(Observable o, Object arg)
-   {
-      update(o);
-   }
+		observable.addObserver(this);
+		if (observable instanceof TileGrid) {
+			tileGrid = (TileGrid) observable;
+			this.rows = tileGrid.getRows();
+			this.columns = tileGrid.getColumns();
+			this.addMouseListener(new MouseListener() {
+				public void mouseClicked(MouseEvent e) {
+				}
+
+				public void mouseEntered(MouseEvent e) {
+				}
+
+				public void mouseExited(MouseEvent e) {
+				}
+
+				public void mousePressed(MouseEvent e) {
+					int column = (e.getX() * columns) / getWidth();
+					int row = ((e.getY() + 15) * rows) / getHeight();
+					if (tileGrid.canMoveUp(row, column)) {
+						tileGrid.moveUp(row, column);
+					} else if (tileGrid.canMoveDown(row, column)) {
+						tileGrid.moveDown(row, column);
+					} else if (tileGrid.canMoveLeft(row, column)) {
+						tileGrid.moveLeft(row, column);
+					} else if (tileGrid.canMoveRight(row, column)) {
+						tileGrid.moveRight(row, column);
+					}
+				}
+
+				public void mouseReleased(MouseEvent e) {
+				}
+			});
+			setLayout(new GridLayout(rows, columns));
+		}
+		update(observable);
+	}
+
+	public void update(Observable o) {
+		if (o instanceof TileGrid) {
+			if (tileGrid.isSolved() == true) {
+				Frame showImage = new DisplayImageFrame(
+						tileGrid.getPuzzleImage());
+				showImage.setSize(tileGrid.getPuzzleImageWidth(),
+						tileGrid.getPuzzleImageHeight());
+				showImage.setTitle("Good Job!!!");
+				super.dispose();
+				showImage.setVisible(true);
+			} else {
+				setLayout(new GridLayout(rows, columns));
+				for (JLabel label : tileGrid) {
+					Tile tile = (Tile) label;
+					tile.displayImage();
+					add(label);
+					// Debugging code below
+					// System.out.printf("Solved row value %d column value %d\n",
+					// tile.getSolvedRow(), tile.getSolvedColumn());
+				}
+			}
+		}
+		revalidate();
+		repaint();
+	}
+
+	@Override
+	public void update(Observable o, Object arg) {
+		update(o);
+	}
+
+	public JMenuBar createMenuBar() {
+		JMenuBar menuBar;
+		JMenu menu;
+
+		// Create the menu bar.
+		menuBar = new JMenuBar();
+
+		// Build the first menu.
+		menu = new JMenu("Game");
+		menu.setMnemonic(KeyEvent.VK_G);
+		menuBar.add(menu);
+
+		OPEN = new JMenuItem("Open", KeyEvent.VK_O);
+		OPEN.addActionListener(new openListener(this));
+		menu.add(OPEN);
+		
+		NEW = new JMenuItem("New", KeyEvent.VK_O);
+		NEW.addActionListener(new openListener(this));
+		menu.add(NEW);
+
+		menu = new JMenu("Settings");
+		menu.setMnemonic(KeyEvent.VK_S);
+		menuBar.add(menu);
+
+		JMenu diffMenu = new JMenu("Difficulty");
+		diffMenu.setMnemonic(KeyEvent.VK_D);
+
+		group = new ButtonGroup();
+		EASY = new JRadioButtonMenuItem("Easy(3x3)");
+		EASY.setSelected(true);
+		EASY.setMnemonic(KeyEvent.VK_E);
+		group.add(EASY);
+		diffMenu.add(EASY);
+
+		REGULAR = new JRadioButtonMenuItem("Normal(4x4)");
+		REGULAR.setMnemonic(KeyEvent.VK_N);
+		group.add(REGULAR);
+		diffMenu.add(REGULAR);
+
+		HARD = new JRadioButtonMenuItem("Hard(5x5)");
+		HARD.setMnemonic(KeyEvent.VK_H);
+		group.add(HARD);
+		diffMenu.add(HARD);
+
+		menu.add(diffMenu);
+
+		return menuBar;
+	}
+
+	class openListener implements ActionListener {
+
+		private TileGridFrame thisFrame;
+
+		public openListener(TileGridFrame f) {
+			super();
+			thisFrame = f;
+		}
+
+		public void drawFrame(BufferedImage image, int difficulty) {
+			DisplayImageFrame displayImageFrame = new DisplayImageFrame(
+					image);
+
+			displayImageFrame.setSize(image.getWidth(), image.getHeight());
+			displayImageFrame.setVisible(true);
+			try {
+				TimeUnit.SECONDS.sleep(2);
+			} catch (InterruptedException e1) {
+			}
+			displayImageFrame.dispose();
+
+			TileGrid tileGrid = new TileGrid(image, difficulty, difficulty);
+			tileGrid.shuffle(100);
+			TileGridFrame tileGridFrame = new TileGridFrame(tileGrid, image);
+			tileGridFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+			tileGridFrame.setJMenuBar(tileGridFrame.createMenuBar());
+			tileGridFrame.setSize(tileGrid.getPuzzleImageWidth(),
+					tileGrid.getPuzzleImageHeight());
+			tileGridFrame.setResizable(false);
+			tileGridFrame.setVisible(true);
+		}
+		
+		public void actionPerformed(ActionEvent e) {
+			int difficulty = 0;
+			if(EASY.isSelected()) {
+				difficulty = 3;
+			} else if(REGULAR.isSelected()) {
+				difficulty = 4;
+			} else if(HARD.isSelected()) {
+				difficulty = 5;
+			}
+			
+			if(e.getSource() == OPEN) {
+				int returnVal = fc.showOpenDialog(TileGridFrame.this);
+
+				if (returnVal == JFileChooser.APPROVE_OPTION) {
+					thisFrame.dispose();
+					File imageFile = fc.getSelectedFile();
+					image = null;
+					try {
+						image = ImageIO.read(imageFile);
+					} catch (IOException e1) {
+						System.err.println("IMAGE CORRUPTION ERROR");
+					}
+					drawFrame(image, difficulty);
+				}
+			} else if(e.getSource() == NEW && image != null) {
+				drawFrame(image, difficulty);
+			}
+		}
+
+		public void createFrame() throws IOException, InterruptedException {
+
+		}
+	}
 }
