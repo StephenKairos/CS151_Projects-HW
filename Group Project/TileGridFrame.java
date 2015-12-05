@@ -63,7 +63,7 @@ public class TileGridFrame extends JFrame implements Observer {
 
 				public void mousePressed(MouseEvent e) {
 					int column = (e.getX() * columns) / getWidth();
-					int row = ((e.getY() + 15) * rows) / getHeight();
+					int row = ((e.getY()) * rows) / getHeight();
 					if (tileGrid.canMoveUp(row, column)) {
 						tileGrid.moveUp(row, column);
 					} else if (tileGrid.canMoveDown(row, column)) {
