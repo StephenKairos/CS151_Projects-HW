@@ -83,14 +83,14 @@ public class SplashFrame extends JPanel implements ActionListener {
 
 				TileGrid tileGrid = new TileGrid(image, 3, 3);
 				tileGrid.shuffle(100);
-				TileGridFrame tileGridFrame = new TileGridFrame(tileGrid, image);
+				TileGridFrame tileGridFrame = new TileGridFrame();
 				tileGridFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 				tileGridFrame.setJMenuBar(tileGridFrame.createMenuBar());
 				tileGridFrame.setSize(tileGrid.getPuzzleImageWidth(),
 						tileGrid.getPuzzleImageHeight());
 				tileGridFrame.setResizable(false);
-				tileGridFrame.setVisible(true);
+				tileGridFrame.setVisible(true);	
 			} else {
 				log.append("Open command cancelled by user." + newline);
 			}
