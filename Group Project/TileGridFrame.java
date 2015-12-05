@@ -242,6 +242,7 @@ public class TileGridFrame extends JFrame implements Observer {
 				}
 			} else if (e.getSource() == NEW && image != null) {
 				drawFrame(image, difficulty);
+				dispose();
 			}
 		}
 
