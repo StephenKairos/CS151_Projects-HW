@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.concurrent.TimeUnit;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -19,6 +18,8 @@ public class TileGridFrame extends JFrame implements Observer {
 	private int rows;
 	private int columns;
 
+	private JMenuBar menuBar;
+	private JMenu menu;
 	private JMenuItem OPEN, NEW;
 	private JRadioButtonMenuItem EASY, REGULAR, HARD;
 	private ButtonGroup group;
@@ -35,15 +36,18 @@ public class TileGridFrame extends JFrame implements Observer {
 				"Slide Puzzle Instructions:\nYou can select a file turn into a puzzle with OPEN.\nTo restart the game with the same image, select NEW. To set the difficulty, select options, then DIFFICULTY.",
 				5, 20);
 		log.setLineWrap(true);
-		log.setMargin(new Insets(5, 5, 5, 5));
+		// log.setMargin(new Insets(5, 5, 5, 5));
 		log.setEditable(false);
 		add(log, BorderLayout.CENTER);
 	}
 
 	/**
 	 * Constructor for TileGridFrame
-	 * @param observable   The Obervable object (TileGrid) that we should subscribe to
-	 * @param newImage     The image to be used in the puzzle
+	 * 
+	 * @param observable
+	 *            The Obervable object (TileGrid) that we should subscribe to
+	 * @param newImage
+	 *            The image to be used in the puzzle
 	 */
 	public TileGridFrame(Observable observable, BufferedImage newImage) {
 		image = newImage;
@@ -92,18 +96,53 @@ public class TileGridFrame extends JFrame implements Observer {
 
 	/**
 	 * This is called whenever there is an update to the data in tileGrid
-	 * @param o   The tileGrid class
+	 * 
+	 * @param o
+	 *            The tileGrid class
 	 */
 	public void update(Observable o) {
 		if (o instanceof TileGrid) {
 			if (tileGrid.isSolved() == true) {
-				Frame showImage = new DisplayImageFrame(
+				JFrame showImage = new DisplayImageFrame(
 						tileGrid.getPuzzleImage());
 				showImage.setSize(tileGrid.getPuzzleImageWidth(),
 						tileGrid.getPuzzleImageHeight());
 				showImage.setTitle("Good Job!!!");
 				super.dispose();
 				showImage.setVisible(true);
+				showImage.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+
+				showImage.addWindowListener(new WindowListener() {
+					
+					@Override
+					public void windowClosed(WindowEvent e) {
+						PuzzleDisplay.callPrompt();
+					}
+					
+					@Override
+					public void windowActivated(WindowEvent e) {
+					}
+
+					@Override
+					public void windowClosing(WindowEvent e) {
+					}
+
+					@Override
+					public void windowDeactivated(WindowEvent e) {
+					}
+
+					@Override
+					public void windowDeiconified(WindowEvent e) {
+					}
+
+					@Override
+					public void windowIconified(WindowEvent e) {
+					}
+
+					@Override
+					public void windowOpened(WindowEvent e) {
+					}
+				});
 			} else {
 				setLayout(new GridLayout(rows, columns));
 				for (JLabel label : tileGrid) {
@@ -125,15 +164,14 @@ public class TileGridFrame extends JFrame implements Observer {
 		update(o);
 	}
 
+	/**
+	 * Creates a menubar to be attached to the Frame.
+	 * 
+	 * @return
+	 */
 	public JMenuBar createMenuBar() {
-		JMenuBar menuBar;
-		JMenu menu;
-		DisplayImageFrame displayImageFrame;
-
-		// Create the menu bar.
 		menuBar = new JMenuBar();
 
-		// Build the first menu.
 		menu = new JMenu("Game");
 		menu.setMnemonic(KeyEvent.VK_G);
 		menuBar.add(menu);
@@ -177,8 +215,11 @@ public class TileGridFrame extends JFrame implements Observer {
 
 	class OpenListener implements ActionListener {
 
+		private static final int shuffleIterations = 100;
+		private static final int seconds = 3;
+		private static final int milli = seconds * 1000;
+
 		private TileGridFrame thisFrame;
-		private DisplayImageFrame displayImageFrame;
 
 		public OpenListener(TileGridFrame f) {
 			super();
@@ -187,10 +228,10 @@ public class TileGridFrame extends JFrame implements Observer {
 
 		public void drawFrame(BufferedImage image, int difficulty) {
 
-		   /**
-		    * This internal class is used so that we can set a timer to
-		    * close the image frame and set the puzzle frame to visible
-		    */
+			/**
+			 * This internal class is used so that we can set a timer to close
+			 * the image frame and set the puzzle frame to visible
+			 */
 			class TileGridDrawListener implements ActionListener {
 
 				private DisplayImageFrame displayImageFrame;
@@ -214,12 +255,19 @@ public class TileGridFrame extends JFrame implements Observer {
 			displayImageFrame
 					.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 			displayImageFrame.setVisible(true);
+
 			TileGrid tileGrid = new TileGrid(image, difficulty, difficulty);
-			tileGrid.shuffle(100);
+			tileGrid.shuffle(shuffleIterations);
+
 			TileGridFrame tileGridFrame = new TileGridFrame(tileGrid, image);
+			tileGridFrame.setLocation((Toolkit.getDefaultToolkit()
+					.getScreenSize().width - image.getWidth()) / 2, (Toolkit
+					.getDefaultToolkit().getScreenSize().height - image
+					.getHeight()) / 2);
+
 			TileGridDrawListener tileGridDrawListener = new TileGridDrawListener(
 					displayImageFrame, tileGridFrame);
-			Timer timer = new Timer(3000, tileGridDrawListener);
+			Timer timer = new Timer(milli, tileGridDrawListener);
 			timer.setRepeats(false);
 			timer.start();
 			tileGridFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
