@@ -22,7 +22,7 @@ public class TileGridFrame extends JFrame implements Observer {
 	private JMenuItem OPEN, NEW;
 	private JRadioButtonMenuItem EASY, REGULAR, HARD;
 	private ButtonGroup group;
-	
+
 	private JFileChooser fc;
 
 	private BufferedImage image;
@@ -42,7 +42,7 @@ public class TileGridFrame extends JFrame implements Observer {
 
 	public TileGridFrame(Observable observable, BufferedImage newImage) {
 		image = newImage;
-		
+
 		fc = new JFileChooser();
 		fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 
@@ -62,16 +62,18 @@ public class TileGridFrame extends JFrame implements Observer {
 				}
 
 				public void mousePressed(MouseEvent e) {
-					int column = (e.getX() * columns) / getWidth();
-					int row = ((e.getY() + 15) * rows) / getHeight();
-					if (tileGrid.canMoveUp(row, column)) {
-						tileGrid.moveUp(row, column);
-					} else if (tileGrid.canMoveDown(row, column)) {
-						tileGrid.moveDown(row, column);
-					} else if (tileGrid.canMoveLeft(row, column)) {
-						tileGrid.moveLeft(row, column);
-					} else if (tileGrid.canMoveRight(row, column)) {
-						tileGrid.moveRight(row, column);
+					if (e.getY() > 50) {
+						int column = (e.getX() * columns) / getWidth();
+						int row = ((e.getY() - 18) * rows) / getHeight();
+						if (tileGrid.canMoveUp(row, column)) {
+							tileGrid.moveUp(row, column);
+						} else if (tileGrid.canMoveDown(row, column)) {
+							tileGrid.moveDown(row, column);
+						} else if (tileGrid.canMoveLeft(row, column)) {
+							tileGrid.moveLeft(row, column);
+						} else if (tileGrid.canMoveRight(row, column)) {
+							tileGrid.moveRight(row, column);
+						}
 					}
 				}
 
@@ -130,7 +132,7 @@ public class TileGridFrame extends JFrame implements Observer {
 		OPEN = new JMenuItem("Open", KeyEvent.VK_O);
 		OPEN.addActionListener(new OpenListener(this));
 		menu.add(OPEN);
-		
+
 		NEW = new JMenuItem("New", KeyEvent.VK_O);
 		NEW.addActionListener(new OpenListener(this));
 		menu.add(NEW);
@@ -163,8 +165,6 @@ public class TileGridFrame extends JFrame implements Observer {
 
 		return menuBar;
 	}
-	
-	
 
 	class OpenListener implements ActionListener {
 
@@ -177,53 +177,56 @@ public class TileGridFrame extends JFrame implements Observer {
 		}
 
 		public void drawFrame(BufferedImage image, int difficulty) {
-		   
-		   class TileGridDrawListener implements ActionListener {
-		      
-		      private DisplayImageFrame displayImageFrame;
-		      private TileGridFrame tileGridFrame;
-		      
-		      public TileGridDrawListener (DisplayImageFrame displayImageFrame, TileGridFrame tileGridFrame) {
-		         this.displayImageFrame = displayImageFrame;
-		         this.tileGridFrame = tileGridFrame;
-		      }
-		      
-		      public void actionPerformed(ActionEvent e)
-		      {
-		         displayImageFrame.dispose();
-		         tileGridFrame.setVisible(true);
-		      }
-		   }
-		   
-	      DisplayImageFrame displayImageFrame = new DisplayImageFrame(image);
-         displayImageFrame.setSize(image.getWidth(), image.getHeight());
-         displayImageFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-         displayImageFrame.setVisible(true);
-         TileGrid tileGrid = new TileGrid(image, difficulty, difficulty);
-         tileGrid.shuffle(100);
-         TileGridFrame tileGridFrame = new TileGridFrame(tileGrid, image);
-         TileGridDrawListener tileGridDrawListener = new TileGridDrawListener(displayImageFrame, tileGridFrame);
-         Timer timer = new Timer(3000, tileGridDrawListener);
-         timer.setRepeats(false);
-         timer.start();
-         tileGridFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-         tileGridFrame.setJMenuBar(tileGridFrame.createMenuBar());
-         tileGridFrame.setSize(tileGrid.getPuzzleImageWidth(),
-               tileGrid.getPuzzleImageHeight());
-         tileGridFrame.setResizable(false);
+
+			class TileGridDrawListener implements ActionListener {
+
+				private DisplayImageFrame displayImageFrame;
+				private TileGridFrame tileGridFrame;
+
+				public TileGridDrawListener(
+						DisplayImageFrame displayImageFrame,
+						TileGridFrame tileGridFrame) {
+					this.displayImageFrame = displayImageFrame;
+					this.tileGridFrame = tileGridFrame;
+				}
+
+				public void actionPerformed(ActionEvent e) {
+					displayImageFrame.dispose();
+					tileGridFrame.setVisible(true);
+				}
+			}
+
+			DisplayImageFrame displayImageFrame = new DisplayImageFrame(image);
+			displayImageFrame.setSize(image.getWidth(), image.getHeight());
+			displayImageFrame
+					.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+			displayImageFrame.setVisible(true);
+			TileGrid tileGrid = new TileGrid(image, difficulty, difficulty);
+			tileGrid.shuffle(100);
+			TileGridFrame tileGridFrame = new TileGridFrame(tileGrid, image);
+			TileGridDrawListener tileGridDrawListener = new TileGridDrawListener(
+					displayImageFrame, tileGridFrame);
+			Timer timer = new Timer(3000, tileGridDrawListener);
+			timer.setRepeats(false);
+			timer.start();
+			tileGridFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			tileGridFrame.setJMenuBar(tileGridFrame.createMenuBar());
+			tileGridFrame.setSize(tileGrid.getPuzzleImageWidth(),
+					tileGrid.getPuzzleImageHeight());
+			tileGridFrame.setResizable(false);
 		}
-		
+
 		public void actionPerformed(ActionEvent e) {
 			int difficulty = 0;
-			if(EASY.isSelected()) {
+			if (EASY.isSelected()) {
 				difficulty = 3;
-			} else if(REGULAR.isSelected()) {
+			} else if (REGULAR.isSelected()) {
 				difficulty = 4;
-			} else if(HARD.isSelected()) {
+			} else if (HARD.isSelected()) {
 				difficulty = 5;
 			}
-			
-			if(e.getSource() == OPEN) {
+
+			if (e.getSource() == OPEN) {
 				int returnVal = fc.showOpenDialog(TileGridFrame.this);
 
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -237,7 +240,7 @@ public class TileGridFrame extends JFrame implements Observer {
 					}
 					drawFrame(image, difficulty);
 				}
-			} else if(e.getSource() == NEW && image != null) {
+			} else if (e.getSource() == NEW && image != null) {
 				drawFrame(image, difficulty);
 			}
 		}

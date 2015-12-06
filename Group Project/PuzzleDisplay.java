@@ -18,6 +18,7 @@ public class PuzzleDisplay
       tileGridFrame.setTitle("Tile Puzzle Game");
       tileGridFrame.setSize(430, 130);
       tileGridFrame.setVisible(true);
+//      System.out.println(tileGridFrame.);
    }
 
 
