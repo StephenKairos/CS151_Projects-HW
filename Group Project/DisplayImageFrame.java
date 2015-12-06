@@ -8,14 +8,10 @@ import javax.swing.JLabel;
 @SuppressWarnings("serial")
 public class DisplayImageFrame extends JFrame {
 	
-	BufferedImage image;
-	
-	public DisplayImageFrame(){};
+	private DisplayImageFrame(){};
 	public DisplayImageFrame(BufferedImage image) {
-		this.image = image;
-		setLayout(new GridLayout(1, 1));
 		JLabel display = new JLabel();
-		display.setIcon(new ImageIcon(this.image));
-		this.add(display);
+		display.setIcon(new ImageIcon(image));
+		add(display);
 	}
 }

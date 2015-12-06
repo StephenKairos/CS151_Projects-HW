@@ -117,6 +117,7 @@ public class TileGridFrame extends JFrame implements Observer {
 	public JMenuBar createMenuBar() {
 		JMenuBar menuBar;
 		JMenu menu;
+		DisplayImageFrame displayImageFrame;
 
 		// Create the menu bar.
 		menuBar = new JMenuBar();
@@ -127,11 +128,11 @@ public class TileGridFrame extends JFrame implements Observer {
 		menuBar.add(menu);
 
 		OPEN = new JMenuItem("Open", KeyEvent.VK_O);
-		OPEN.addActionListener(new openListener(this));
+		OPEN.addActionListener(new OpenListener(this));
 		menu.add(OPEN);
 		
 		NEW = new JMenuItem("New", KeyEvent.VK_O);
-		NEW.addActionListener(new openListener(this));
+		NEW.addActionListener(new OpenListener(this));
 		menu.add(NEW);
 
 		menu = new JMenu("Settings");
@@ -162,38 +163,54 @@ public class TileGridFrame extends JFrame implements Observer {
 
 		return menuBar;
 	}
+	
+	
 
-	class openListener implements ActionListener {
+	class OpenListener implements ActionListener {
 
 		private TileGridFrame thisFrame;
+		private DisplayImageFrame displayImageFrame;
 
-		public openListener(TileGridFrame f) {
+		public OpenListener(TileGridFrame f) {
 			super();
 			thisFrame = f;
 		}
 
 		public void drawFrame(BufferedImage image, int difficulty) {
-			DisplayImageFrame displayImageFrame = new DisplayImageFrame(
-					image);
-
-			displayImageFrame.setSize(image.getWidth(), image.getHeight());
-			displayImageFrame.setVisible(true);
-			try {
-				TimeUnit.SECONDS.sleep(2);
-			} catch (InterruptedException e1) {
-			}
-			displayImageFrame.dispose();
-
-			TileGrid tileGrid = new TileGrid(image, difficulty, difficulty);
-			tileGrid.shuffle(100);
-			TileGridFrame tileGridFrame = new TileGridFrame(tileGrid, image);
-			tileGridFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-			tileGridFrame.setJMenuBar(tileGridFrame.createMenuBar());
-			tileGridFrame.setSize(tileGrid.getPuzzleImageWidth(),
-					tileGrid.getPuzzleImageHeight());
-			tileGridFrame.setResizable(false);
-			tileGridFrame.setVisible(true);
+		   
+		   class TileGridDrawListener implements ActionListener {
+		      
+		      private DisplayImageFrame displayImageFrame;
+		      private TileGridFrame tileGridFrame;
+		      
+		      public TileGridDrawListener (DisplayImageFrame displayImageFrame, TileGridFrame tileGridFrame) {
+		         this.displayImageFrame = displayImageFrame;
+		         this.tileGridFrame = tileGridFrame;
+		      }
+		      
+		      public void actionPerformed(ActionEvent e)
+		      {
+		         displayImageFrame.dispose();
+		         tileGridFrame.setVisible(true);
+		      }
+		   }
+		   
+	      DisplayImageFrame displayImageFrame = new DisplayImageFrame(image);
+         displayImageFrame.setSize(image.getWidth(), image.getHeight());
+         displayImageFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+         displayImageFrame.setVisible(true);
+         TileGrid tileGrid = new TileGrid(image, difficulty, difficulty);
+         tileGrid.shuffle(100);
+         TileGridFrame tileGridFrame = new TileGridFrame(tileGrid, image);
+         TileGridDrawListener tileGridDrawListener = new TileGridDrawListener(displayImageFrame, tileGridFrame);
+         Timer timer = new Timer(3000, tileGridDrawListener);
+         timer.setRepeats(false);
+         timer.start();
+         tileGridFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+         tileGridFrame.setJMenuBar(tileGridFrame.createMenuBar());
+         tileGridFrame.setSize(tileGrid.getPuzzleImageWidth(),
+               tileGrid.getPuzzleImageHeight());
+         tileGridFrame.setResizable(false);
 		}
 		
 		public void actionPerformed(ActionEvent e) {
