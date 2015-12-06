@@ -40,6 +40,11 @@ public class TileGridFrame extends JFrame implements Observer {
 		add(log, BorderLayout.CENTER);
 	}
 
+	/**
+	 * Constructor for TileGridFrame
+	 * @param observable   The Obervable object (TileGrid) that we should subscribe to
+	 * @param newImage     The image to be used in the puzzle
+	 */
 	public TileGridFrame(Observable observable, BufferedImage newImage) {
 		image = newImage;
 
@@ -85,6 +90,10 @@ public class TileGridFrame extends JFrame implements Observer {
 		update(observable);
 	}
 
+	/**
+	 * This is called whenever there is an update to the data in tileGrid
+	 * @param o   The tileGrid class
+	 */
 	public void update(Observable o) {
 		if (o instanceof TileGrid) {
 			if (tileGrid.isSolved() == true) {
@@ -178,6 +187,10 @@ public class TileGridFrame extends JFrame implements Observer {
 
 		public void drawFrame(BufferedImage image, int difficulty) {
 
+		   /**
+		    * This internal class is used so that we can set a timer to
+		    * close the image frame and set the puzzle frame to visible
+		    */
 			class TileGridDrawListener implements ActionListener {
 
 				private DisplayImageFrame displayImageFrame;

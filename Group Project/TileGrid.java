@@ -21,13 +21,17 @@ public class TileGrid extends Observable
    private ArrayList<ArrayList<Tile>> tileGrid;
    private Tile                       blankTile;
    
-   private TileGrid()
-   {
-   };
+   private TileGrid() {};
 
    private int iterRow;
    private int iterColumn;
 
+   /**
+    * TileGrid constructor
+    * @param image   BufferedImage to be broken into tiles
+    * @param rows    number of rows
+    * @param columns number of columns
+    */
    public TileGrid(BufferedImage image, int rows, int columns)
    {
 	  puzzleImage = image;
@@ -68,6 +72,13 @@ public class TileGrid extends Observable
       }
    }
 
+   /**
+    * Shows the ability of a tile to move in the given direction
+    * @param row     the row the tile is in
+    * @param column  the column the tile is in
+    * @return        true if the tile can be moved in the given
+    *                direction. False if not.
+    */
    public boolean canMoveUp(int row, int column)
    {
       if ((row - 1) >= 0 && tileGrid.get(row - 1).get(column) == blankTile)
@@ -75,6 +86,13 @@ public class TileGrid extends Observable
       return false;
    }
 
+   /**
+    * Shows the ability of a tile to move in the given direction
+    * @param row     the row the tile is in
+    * @param column  the column the tile is in
+    * @return        true if the tile can be moved in the given
+    *                direction. False if not.
+    */
    public boolean canMoveDown(int row, int column)
    {
       if ((row + 1) < rows && tileGrid.get(row + 1).get(column) == blankTile)
@@ -82,6 +100,13 @@ public class TileGrid extends Observable
       return false;
    }
 
+   /**
+    * Shows the ability of a tile to move in the given direction
+    * @param row     the row the tile is in
+    * @param column  the column the tile is in
+    * @return        true if the tile can be moved in the given
+    *                direction. False if not.
+    */
    public boolean canMoveLeft(int row, int column)
    {
       if ((column - 1) >= 0 && tileGrid.get(row).get(column - 1) == blankTile)
@@ -89,6 +114,13 @@ public class TileGrid extends Observable
       return false;
    }
 
+   /**
+    * Shows the ability of a tile to move in the given direction
+    * @param row     the row the tile is in
+    * @param column  the column the tile is in
+    * @return        true if the tile can be moved in the given
+    *                direction. False if not.
+    */
    public boolean canMoveRight(int row, int column)
    {
       if ((column + 1) < columns && tileGrid.get(row).get(column + 1) == blankTile)
@@ -96,6 +128,11 @@ public class TileGrid extends Observable
       return false;
    }
    
+   /**
+    * Attempts to move a tile in the given direction
+    * @param row     the row the tile is in
+    * @param column  the column the tile is in
+    */
    public void moveUp(int row, int column)
    {
       if (!canMoveUp(row, column))
@@ -105,6 +142,11 @@ public class TileGrid extends Observable
       swapTiles(row, column, newRow, newColumn);
    }
    
+   /**
+    * Attempts to move a tile in the given direction
+    * @param row     the row the tile is in
+    * @param column  the column the tile is in
+    */
    public void moveDown(int row, int column)
    {
       if (!canMoveDown(row, column))
@@ -114,6 +156,11 @@ public class TileGrid extends Observable
       swapTiles(row, column, newRow, newColumn);
    }
    
+   /**
+    * Attempts to move a tile in the given direction
+    * @param row     the row the tile is in
+    * @param column  the column the tile is in
+    */
    public void moveLeft(int row, int column)
    {
       if (!canMoveLeft(row, column))
@@ -123,6 +170,11 @@ public class TileGrid extends Observable
       swapTiles(row, column, newRow, newColumn);
    }
    
+   /**
+    * Attempts to move a tile in the given direction
+    * @param row     the row the tile is in
+    * @param column  the column the tile is in
+    */
    public void moveRight(int row, int column)
    {
       if (!canMoveRight(row, column))
@@ -132,6 +184,13 @@ public class TileGrid extends Observable
       swapTiles(row, column, newRow, newColumn);
    }
    
+   /**
+    * Swaps tile locations in tileGrid
+    * @param rowFrom       the row to be moved from
+    * @param columnFrom    the column to be moved from
+    * @param rowTo         the row to be moved to
+    * @param columnTo      the column to be moved to
+    */
    public void swapTiles(int rowFrom, int columnFrom, int rowTo, int columnTo) {
       Tile tileFrom = tileGrid.get(rowFrom).get(columnFrom);
       Tile tileTo = tileGrid.get(rowTo).get(columnTo);
@@ -140,16 +199,27 @@ public class TileGrid extends Observable
       dataChanged();
    }
 
+   /**
+    * Shows the number of rows in this tileGrid
+    * @return number of rows in tileGrid
+    */
    public int getRows()
    {
       return rows;
    }
 
+   /**
+    * Shows the number of columns in this tileGrid
+    * @return number of columns in tileGrid
+    */
    public int getColumns()
    {
       return columns;
    }
-
+   
+   /**
+    * Implementation of iterator hasNext()
+    */
    @Override
    public boolean hasNext()
    {
@@ -157,7 +227,10 @@ public class TileGrid extends Observable
          return true;
       return false;
    }
-
+   
+   /**
+    * Implementation of iterator next()
+    */
    @Override
    public JLabel next()
    {
@@ -180,6 +253,10 @@ public class TileGrid extends Observable
       throw new NoSuchElementException();
    }
 
+   /**
+    * Our iterator override. This allows for tiles to be returned
+    * in the order they should be drawn in for GridLayout.
+    */
    @Override
    public Iterator<JLabel> iterator()
    {
@@ -188,20 +265,38 @@ public class TileGrid extends Observable
       return this;
    }
 
+   /**
+    * Gives the width in pixels of the puzzleImage
+    * @return width in pixels of the puzzleImage
+    */
    public int getPuzzleImageWidth()
    {
       return puzzleImageWidth;
    }
 
+   /**
+    * Gives the height in pixels of the puzzleImage
+    * @return height in pixels of the puzzleImage
+    */
    public int getPuzzleImageHeight()
    {
       return puzzleImageHeight;
    }
+   
+   /**
+    * Method to be called whenever data in tileGrid is modified.
+    * This will notify observers that data has changed.
+    */
    public void dataChanged() 
    {
       setChanged();
       notifyObservers();
    }
+   
+   /**
+    * Loops through tileGrid and checks isSolved for every tile
+    * @return true if the entire puzzle is solved, false if not.
+    */
    public boolean isSolved() {
 	   boolean solved = true;
 	   for (int i = 0; i < rows; i++) {
@@ -213,6 +308,11 @@ public class TileGrid extends Observable
 	   }
 	   return solved;
    }
+   
+   /**
+    * Shuffles the puzzle
+    * @param iterations how many times the blank tile should be moved
+    */
    public void shuffle(int iterations) {
 	   int blankRow = 0;
 	   int blankColumn = 0;
@@ -249,6 +349,11 @@ public class TileGrid extends Observable
 	   }
 	   
    }
+   
+   /**
+    * Gives the image used in the puzzle
+    * @return BufferedImage object of the image
+    */
    public BufferedImage getPuzzleImage() {
       return puzzleImage;
    }

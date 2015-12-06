@@ -8,6 +8,11 @@ import javax.swing.JLabel;
 @SuppressWarnings("serial")
 public class DisplayImageFrame extends JFrame {
 	
+   /**
+    * Creates a JFrame of type DisplayImageFrame
+    * @param  image   BufferedImage that will be shown
+    *                 in the frame.
+    */
 	private DisplayImageFrame(){};
 	public DisplayImageFrame(BufferedImage image) {
 		JLabel display = new JLabel();
