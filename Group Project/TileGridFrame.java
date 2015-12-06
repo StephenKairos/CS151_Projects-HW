@@ -22,7 +22,9 @@ public class TileGridFrame extends JFrame implements Observer {
 	private JMenu menu;
 	private JMenuItem OPEN, NEW;
 	private JRadioButtonMenuItem EASY, REGULAR, HARD;
-	private ButtonGroup group;
+	private JRadioButtonMenuItem DEMO, TWENTY, FIFTY, HUNDRED;
+	private ButtonGroup sizeGroup;
+	private ButtonGroup shuffleGroup;
 
 	private JFileChooser fc;
 
@@ -191,31 +193,55 @@ public class TileGridFrame extends JFrame implements Observer {
 		JMenu diffMenu = new JMenu("Difficulty");
 		diffMenu.setMnemonic(KeyEvent.VK_D);
 
-		group = new ButtonGroup();
+		sizeGroup = new ButtonGroup();
 		EASY = new JRadioButtonMenuItem("Easy(3x3)");
 		EASY.setSelected(true);
 		EASY.setMnemonic(KeyEvent.VK_E);
-		group.add(EASY);
+		sizeGroup.add(EASY);
 		diffMenu.add(EASY);
 
 		REGULAR = new JRadioButtonMenuItem("Normal(4x4)");
 		REGULAR.setMnemonic(KeyEvent.VK_N);
-		group.add(REGULAR);
+		sizeGroup.add(REGULAR);
 		diffMenu.add(REGULAR);
 
 		HARD = new JRadioButtonMenuItem("Hard(5x5)");
 		HARD.setMnemonic(KeyEvent.VK_H);
-		group.add(HARD);
+		sizeGroup.add(HARD);
 		diffMenu.add(HARD);
 
 		menu.add(diffMenu);
+		
+		JMenu shuffleMenu = new JMenu("Shuffles");
+		shuffleMenu.setMnemonic(KeyEvent.VK_F);
+
+		shuffleGroup = new ButtonGroup();
+		DEMO = new JRadioButtonMenuItem("Demo (1 time)");
+		DEMO.setSelected(true);
+		shuffleGroup.add(DEMO);
+		shuffleMenu.add(DEMO);
+
+		TWENTY = new JRadioButtonMenuItem("20 Times");
+		shuffleGroup.add(TWENTY);
+		shuffleMenu.add(TWENTY);
+
+		FIFTY = new JRadioButtonMenuItem("50 Times");
+		shuffleGroup.add(FIFTY);
+		shuffleMenu.add(FIFTY);
+		
+		HUNDRED = new JRadioButtonMenuItem("100 Times");
+		shuffleGroup.add(HUNDRED);
+		shuffleMenu.add(HUNDRED);
+
+		menu.add(shuffleMenu);
 
 		return menuBar;
 	}
 
 	class OpenListener implements ActionListener {
 
-		private static final int shuffleIterations = 100;
+		private int shuffleIterations = 0;
+		private int difficulty = 1;
 		private static final int seconds = 3;
 		private static final int milli = seconds * 1000;
 
@@ -278,13 +304,22 @@ public class TileGridFrame extends JFrame implements Observer {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			int difficulty = 0;
 			if (EASY.isSelected()) {
 				difficulty = 3;
 			} else if (REGULAR.isSelected()) {
 				difficulty = 4;
 			} else if (HARD.isSelected()) {
-				difficulty = 5;
+				difficulty = 10;
+			}
+			
+			if(DEMO.isSelected()) {
+				shuffleIterations = 1;
+			} else if(TWENTY.isSelected()) {
+				shuffleIterations = 20;
+			} else if(FIFTY.isSelected()) {
+				shuffleIterations = 50;
+			} else if(HUNDRED.isSelected()) {
+				shuffleIterations = 100;
 			}
 
 			if (e.getSource() == OPEN) {
